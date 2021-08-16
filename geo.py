@@ -20,7 +20,7 @@ def getModuloVector(vector):
     modulo = pow(modulo,0.5) 
     return modulo
 
-def fitnessfunction(function, vector):
+def fitnessfunction(vector):
     return np.sum(np.power(vector, 2))
 
 #Inicializacion
