@@ -5,7 +5,10 @@
 %  
 %  Developed in:	Python 3.8
 %  
-%  Programmer:		Abdolkarim Mohammadi-Balani
+%  Implementers/    Gabriel Lois, Ramon Labbe,
+%   Programmers:	Eduardo Zamorano, Jaime Olguin,
+%                   Alfredo Escudero
+%                   
 %  
 %  Original paper:	Abdolkarim Mohammadi-Balani, Mahmoud Dehghan Nayeri, 
 %					Adel Azar, Mohammadreza Taghizadeh-Yazdi, 
@@ -39,6 +42,7 @@ def getNormOfVector(vector):
     norm = pow(norm,0.5) 
     return norm
 
+#Return Fitness Score for provided vector (variables)
 def fitnessFunction(vector):
     if functionNumber.upper() == 'F6':
         return np.sum(np.power(vector, 2))
