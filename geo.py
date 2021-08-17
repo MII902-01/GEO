@@ -1,122 +1,156 @@
+"""
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  
+%  Golden Eagle Optimizer (GEO) source codes version 1.0
+%  
+%  Developed in:	Python 3.8
+%  
+%  Programmer:		Abdolkarim Mohammadi-Balani
+%  
+%  Original paper:	Abdolkarim Mohammadi-Balani, Mahmoud Dehghan Nayeri, 
+%					Adel Azar, Mohammadreza Taghizadeh-Yazdi, 
+%					Golden Eagle Optimizer: A nature-inspired 
+%					metaheuristic algorithm, Computers & Industrial Engineering.
+%
+%                  https://doi.org/10.1016/j.cie.2020.107050               
+%   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+"""
+#%%Libraries
 import numpy as np
 
-#Parametros que debiesen ser recibidos
+# %%Parameters
 iterations = 1000
 populationSize = 50
 attackPropensityStart = 0.5
 attackPropensityEnd = 2
 cruisePropensityStart = 2
 cruisePropensityEnd = 0.5
-function = "No se ocupa aun"
+functionNumber = "F6"
 nvars = 30
 lowerLimit = -100
 upperLimit = 100
 
-#Funciones
+# %% Functions Definition
 
-#Devuelve la raiz cuadrada de la suma de los elementos elevados al cuadrado (Equacion 7)
-def getModuloVector(vector):
-    modulo = np.sum(np.power(vector, 2))
-    modulo = pow(modulo,0.5) 
-    return modulo
+#Return Euclidean Norm of a given vector (Equacion 7)
+def getNormOfVector(vector):
+    norm = np.sum(np.power(vector, 2))
+    norm = pow(norm,0.5) 
+    return norm
 
-def fitnessfunction(vector):
-    return np.sum(np.power(vector, 2))
+def fitnessFunction(vector):
+    if functionNumber.upper() == 'F6':
+        return np.sum(np.power(vector, 2))
+    elif functionNumber.upper() == 'F7':
+        return ""
+    elif functionNumber.upper() == 'F8':
+        return ""
+    elif functionNumber.upper() == 'F9':
+        return ""
+    else:
+        return None
 
-#Inicializacion
+# %%Initialization
 
-#Generamos una matriz de aguilas x soluciones con soluciones random entre 0 y 1
+#Populate with first random solutions bounded to function's domain 
 x = np.random.rand(populationSize,nvars)
-
-#Movemos los puntos a los limites del dominio
 x = lowerLimit + x * (upperLimit - lowerLimit)
 
-#Se evalua las soluciones en la funcion
+#Initialize flockMemoryX with a copy of generated solutions
 flockMemoryX = np.copy(x)
 
-#Se guarda las soluciones en un y su evaluacion en variables apartes
+#Initialize flockMemoryF with evaluated solutions in fitness function
 flockMemoryF = []
-for var in x:
-     flockMemoryF.append(fitnessfunction(var))
+for solution in x:
+     flockMemoryF.append(fitnessFunction(solution))
 
-curvaConvergencia = []
+#Initialize Attack and Cruise Propensy
+attackpropensy = 0
+cruisepropensy = 0
+
+#Initialize Array to store best solution for each iteration
+ConvergenceCurve = []
 
 #Main Loop
 for i in range(iterations):
-    #Se actualiza el attack y cruise propension (Ecuacion 9)
+    #Update Attack and Cruise Propensy (Equation 9)
     attackpropensy = attackPropensityStart + (i/iterations) * abs((attackPropensityEnd - attackPropensityStart))
     cruisepropensy = cruisePropensityStart - (i/iterations) * abs((cruisePropensityEnd - cruisePropensityStart))
 
-    #Se inicializa las aguilas y las presas(Una a una, sin repeticion)
+    #Initialize randomly one-to-one mapping between eagle and prey from population’s memory
     mapping = np.random.permutation(np.arange(populationSize))
     preySelection = np.empty((0,nvars))
     for k in mapping:
         preySelection = np.append(preySelection, np.array([flockMemoryX[k]]), axis=0)
     
+    #Eagles loop
     for j in range(populationSize):
         eagle = x[j]
         prey = preySelection[j]
 
-        #Ecuacion 1
+        #Get Attack Vector (Equation 1)
         attackvectorinitial = prey - eagle
 
-        radio = getModuloVector(attackvectorinitial)
+        radius = getNormOfVector(attackvectorinitial)
         
-        if radio != 0: 
-            #Se calcula el hiperplano (Ecuacion 2)
+        if radius != 0: 
+            #Get scalar form of the hyperplane equation in n-dimensional (Equation 2)
             d = np.sum(attackvectorinitial*eagle)
-            #Se elige una columna al azar (que no contenga 0)
+            #Randomly choose index of one variable as a fixed variable (Variable does't has to be 0)
             idx = np.random.choice(np.nonzero(attackvectorinitial)[0])
-            #Sumatoria de todos los elementos del vector de ataque excepto la columna fija
-            sumatoriaattackvector = 0
+
+            #Summation of attack vector except fixed variable
+            attackvectorsummation = 0
             for index, item in enumerate(attackvectorinitial):
                 if index != idx:
-                    sumatoriaattackvector = sumatoriaattackvector + item
-            #Se obtiene el valor de la columna fija (Ecuacion 4)
-            ck = (d-sumatoriaattackvector)/attackvectorinitial[idx]
+                    attackvectorsummation = attackvectorsummation + item
+            #Find the value of the fixed variable (Equation 4)
+            ck = (d-attackvectorsummation)/attackvectorinitial[idx]
             
-            #Genero el punto de destino del vector de crucero (Ecuacion 5)
+            #Assign random values to all the variables except the k-th variable because the k-th variable is fixed (Equation 5)
             cruisevectordestination = 2 * np.random.rand(nvars) - 1; # [-1,1]
             cruisevectordestination[idx] = ck
 
-            #Calculo el vector de crucero
+            #Get Cruice Vector
             cruisevectorinitial = cruisevectordestination - eagle
             
-            #Calculo de vectores unitarios (Ecuacion 7)
-            AttackVectorUnit = attackvectorinitial/getModuloVector(attackvectorinitial)
-            CruiseVectorUnit = cruisevectorinitial/getModuloVector(cruisevectorinitial)
+            #Get attack and cruise unit vectors (Equation 7)
+            AttackVectorUnit = attackvectorinitial/getNormOfVector(attackvectorinitial)
+            CruiseVectorUnit = cruisevectorinitial/getNormOfVector(cruisevectorinitial)
             
-            #Se calcula los vectores de ataque y crucero finales (Ecuacion 6)
-            attackvector = np.random.rand() * attackpropensy * AttackVectorUnit * radio
-            cruisevector = np.random.rand() * cruisepropensy * CruiseVectorUnit * radio
+            #Get final attack and cruise vector for Equation 6
+            attackvector = np.random.rand() * attackpropensy * AttackVectorUnit * radius
+            cruisevector = np.random.rand() * cruisepropensy * CruiseVectorUnit * radius
             
-            #Se calcula el vector de paso
+            #Get Step Vector (Equation 6)
             stepVector = attackvector + cruisevector
             
-            #Ecaucion 8
+            #Move eagle to new position (Equation 8)
             eagle = eagle + stepVector
             
-            #Reviso/Corrigo el dominio de las nuevas soluciones
+            #Fix out-of-bound variables towards the function limit (No feasible solution handling)
             for index, item in enumerate(eagle):
                 if item > upperLimit:
                     eagle[index] = upperLimit
                 if item < lowerLimit:
                     eagle[index] = lowerLimit
             
-            #Evaluar la nueva solucion en la funcion
-            FitnessScore = fitnessfunction(eagle)
+            #Evaluate fitness function for the new position
+            FitnessScore = fitnessFunction(eagle)
 
-            #Comparo el nuevo resultado con el almacenado (Memoria de la bandada)
+            #Check if new position fitness score is better than the fitness score of the eagle in memory (flockMemory)
             if flockMemoryF[j] > FitnessScore:
+                #Replace the new position in eagle memory (flockMemory)
                 flockMemoryF[j] = FitnessScore
                 flockMemoryX[j] = eagle
             x[j] = eagle
-    curvaConvergencia.append(np.min(flockMemoryF))
+    ConvergenceCurve.append(np.min(flockMemoryF))
     
-#Final Result
+#%%Final Result
 print(np.min(flockMemoryF))
 print(flockMemoryX[np.argmin(flockMemoryF)])
 
 import matplotlib.pyplot as plt
-plt.plot(curvaConvergencia)
+plt.plot(ConvergenceCurve)
 plt.show()
