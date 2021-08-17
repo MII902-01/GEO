@@ -82,16 +82,13 @@ for i in range(iterations):
     attackpropensy = attackPropensityStart + (i/iterations) * abs((attackPropensityEnd - attackPropensityStart))
     cruisepropensy = cruisePropensityStart - (i/iterations) * abs((cruisePropensityEnd - cruisePropensityStart))
 
-    #Initialize randomly one-to-one mapping between eagle and prey from population’s memory
-    mapping = np.random.permutation(np.arange(populationSize))
-    preySelection = np.empty((0,nvars))
-    for k in mapping:
-        preySelection = np.append(preySelection, np.array([flockMemoryX[k]]), axis=0)
+    #Initialize randomly one-to-one mapping between eagle and prey
+    preyassigned = np.random.permutation(np.arange(populationSize))
     
     #Eagles loop
     for j in range(populationSize):
         eagle = x[j]
-        prey = preySelection[j]
+        prey = flockMemoryX[preyassigned[j]]
 
         #Get Attack Vector (Equation 1)
         attackvectorinitial = prey - eagle
