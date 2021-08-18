@@ -21,18 +21,20 @@
 """
 #%%Libraries
 import numpy as np
+from opfunu.dimension_based.benchmarknd import Functions
+import csv
 
 # %%Parameters
 iterations = 1000
 populationSize = 50
 attackPropensityStart = 0.5
 attackPropensityEnd = 2
-cruisePropensityStart = 2
+cruisePropensityStart = 1
 cruisePropensityEnd = 0.5
-functionNumber = "F6"
+functionNumber = "F2"
 nvars = 30
-lowerLimit = -100
-upperLimit = 100
+lowerLimit = -10
+upperLimit = 10
 
 # %% Functions Definition
 
@@ -44,30 +46,40 @@ def getNormOfVector(vector):
 
 #Return Fitness Score for provided vector (variables)
 def fitnessFunction(vector):
-    if functionNumber.upper() == 'F6':
-        return np.sum(np.power(vector, 2))
+    if functionNumber.upper() == 'F1':
+        return np.sum(np.power(vector,2))
+    elif functionNumber.upper() == 'F2':
+        return functions._sum_squres__(vector)
+    elif functionNumber.upper() == 'F3':
+        return functions._zakharov__(vector)
+    elif functionNumber.upper() == 'F4':
+        return functions._qing__(vector)
+    elif functionNumber.upper() == 'F5':
+        return functions._shubert__(vector)
+    elif functionNumber.upper() == 'F6':
+        return functions._quartic__(vector)
     elif functionNumber.upper() == 'F7':
-        return ""
+        return functions._sum_squres__(vector)
     elif functionNumber.upper() == 'F8':
-        return ""
-    elif functionNumber.upper() == 'F9':
-        return ""
+        return functions._qing__(vector)
     else:
         return None
 
 # %%Initialization
 
+#instance opfunu benchmarknd Library
+functions = Functions()
+
 #Populate with first random solutions bounded to function's domain 
 x = np.random.rand(populationSize,nvars)
 x = lowerLimit + x * (upperLimit - lowerLimit)
-
 #Initialize flockMemoryX with a copy of generated solutions
 flockMemoryX = np.copy(x)
 
 #Initialize flockMemoryF with evaluated solutions in fitness function
 flockMemoryF = []
-for solution in x:
-     flockMemoryF.append(fitnessFunction(solution))
+for solution in x:   
+    flockMemoryF.append(fitnessFunction(solution))
 
 #Initialize Attack and Cruise Propensy
 attackpropensy = 0
@@ -151,7 +163,9 @@ for i in range(iterations):
 #%%Final Result
 print(np.min(flockMemoryF))
 print(flockMemoryX[np.argmin(flockMemoryF)])
-
+with open('excecution.csv', 'a') as the_file:
+  line = 'sphere,' + str(np.min(flockMemoryF)) + '\n'
+  the_file.write(line)
 import matplotlib.pyplot as plt
-plt.plot(ConvergenceCurve)
-plt.show()
+#plt.plot(ConvergenceCurve)
+#plt.show()
