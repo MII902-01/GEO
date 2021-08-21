@@ -46,9 +46,6 @@ while loops != 1:
         norm = np.sum(np.power(vector, 2))
         norm = pow(norm, 0.5)
         return norm
-    def _step__(vector):
-        vector=vector+0.5
-        return np.sum((vector)**2)
 
     # Return Fitness Score for provided vector (variables)
     def fitnessFunction(vector):
