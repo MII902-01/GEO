@@ -3,7 +3,8 @@
 ## Developed in:	Python 3.8 
 
 Implementers/Programmers:
-- Gabriel Lois, Ramon Labbe
+- Gabriel Lois
+- Ramon Labbe
 - Eduardo Zamorano
 - Jaime Olguin
 - Alfredo Escudero
