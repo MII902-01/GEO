@@ -21,11 +21,9 @@
 """
 # %%Libraries
 import numpy as np
-#From F1 to F4 use benchmark2d from F5 to F6 use benchmarknd library
-#For F7 use uni_modal Functions
-#from opfunu.dimension_based.benchmark2d import Functions
-#from opfunu.dimension_based.benchmarknd import Functions
-from opfunu.type_based.uni_modal import Functions
+from opfunu.dimension_based.benchmark2d import Functions as Functions2d
+from opfunu.dimension_based.benchmarknd import Functions as Functionsnd
+from opfunu.type_based.uni_modal import Functions as Functionsum
 import csv
 
 # %%Parameters
@@ -35,7 +33,7 @@ attackPropensityStart = 0.5
 attackPropensityEnd = 2
 cruisePropensityStart = 1
 cruisePropensityEnd = 0.5
-functionNumber = "F7"
+functionNumber = "F6"
 nvars = 30
 lowerLimit = -100
 upperLimit = 100
@@ -43,7 +41,7 @@ loops = 0
 while loops != 1:
     # %% Functions Definition
 
-    # Return Euclidean Norm of a given vector (Equacion 7)
+    # Return Euclidean Norm of a given vector (Equation 7)
     def getNormOfVector(vector):
         norm = np.sum(np.power(vector, 2))
         norm = pow(norm, 0.5)
@@ -55,27 +53,29 @@ while loops != 1:
     # Return Fitness Score for provided vector (variables)
     def fitnessFunction(vector):
         if functionNumber.upper() == 'F1':
-            return functions._beale__(vector)
+            return functions2d._beale__(vector)
         elif functionNumber.upper() == 'F2':
-            return functions._matyas__(vector)
+            return functions2d._matyas__(vector)
         elif functionNumber.upper() == 'F3':
-            return functions._three_hump_camel__(vector)
+            return functions2d._three_hump_camel__(vector)
         elif functionNumber.upper() == 'F4':
-            return functions._exponential__(vector)
+            return functions2d._exponential__(vector)
         elif functionNumber.upper() == 'F5':
-            return functions._ridge__(vector,d=1,alpha=0.5)
+            return functionsnd._ridge__(vector,d=1,alpha=0.5)
         elif functionNumber.upper() == 'F6':
-            return functions._sphere__(vector)
+            return functionsnd._sphere__(vector)
         elif functionNumber.upper() == 'F7':
-            return functions._step_2__(vector)
+            return functionsum._step_2__(vector)
         else:
             return None
 
 
     # %%Initialization
 
-    # Instance opfunu benchmarknd Library
-    functions = Functions()
+    # Instance opfunu benchmark Libraries
+    functionsnd = Functionsnd()
+    functions2d = Functions2d()
+    functionsum = Functionsum()
 
     # Populate with first random solutions bounded to function's domain
     x = np.random.rand(populationSize, nvars)
