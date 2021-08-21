@@ -17,4 +17,8 @@ Original paper:
 
 Golden Eagle Optimizer: A nature-inspired metaheuristic algorithm, Computers & Industrial Engineering.
 
-https://doi.org/10.1016/j.cie.2020.107050               
+https://doi.org/10.1016/j.cie.2020.107050        
+
+OpFuNU A collection of Benchmark functions for numerical optimization problems. Framework of OPtimization FUnction in NUmpy
+
+https://github.com/thieu1995/opfunu
