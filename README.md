@@ -1,6 +1,6 @@
-Golden Eagle Optimizer (GEO) source codes version 1.0  
+# Golden Eagle Optimizer (GEO) source codes version 1.0  
 
-Developed in:	Python 3.8 
+## Developed in:	Python 3.8 
 
 Implementers/Programmers:
 - Gabriel Lois, Ramon Labbe
